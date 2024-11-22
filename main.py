@@ -1,4 +1,4 @@
-from Funcao import funcoes as fc
+from Functions import functions as fc
 
 try:
     fc.connect()

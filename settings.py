@@ -1,0 +1,6 @@
+# POSTGRESQL SETTINGS
+DB_NAME = 'petshop'
+DB_USER = 'postgres'
+DB_PASSWORD = '22131511'
+DB_HOST = 'localhost'
+DB_PORT = '5432'

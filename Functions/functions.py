@@ -253,18 +253,26 @@ def consulta1():
     ORDER BY 
         receita_total DESC
     """
-    print("Consulta 1: Receita Total por Cliente e Funcionário.")
+    print("\n Consulta 1: Receita Total por Cliente e Funcionário.")
+
     cursor = cnx.cursor()
     try:
         cursor.execute(select_query)
         myresult = cursor.fetchall()
 
-        for x in myresult:
-            print(x)
-
-        # Extraindo os dados
-        clientes = [f"{row[0]} ({row[1]})" for row in myresult]  # Combina o nome do cliente com o funcionário
+        # Extraindo os dados para exibição no terminal
+        clientes = [f"{row[0]} ({row[1]})" for row in myresult]  # Combina o nome do cliente com o nome do funcionário
         receita_total = [row[2] for row in myresult]
+
+        # Criando um DataFrame para exibir os resultados tabulares
+        data = pd.DataFrame({
+            'Cliente (Funcionário)': clientes,
+            'Receita Total (R$)': receita_total
+        })
+
+        # Exibindo a tabela de forma tabular no terminal
+        print("\nResultado da Consulta:")
+        print(data)
 
         # Gerando o gráfico de barras
         plt.figure(figsize=(10, 6))
@@ -303,28 +311,41 @@ def consulta2():
         total_vendido DESC
     """
     print("Consulta 2: Quantidade de Produtos Vendidos por Tipo e Fornecedor.")
+
     cursor = cnx.cursor()
-    cursor.execute(select_query)
-    myresult = cursor.fetchall()
+    try:
+        cursor.execute(select_query)
+        myresult = cursor.fetchall()
 
-    for x in myresult:
-        print(x)
+        # Extraindo os dados para exibição no terminal
+        produtos_fornecedores = [f"{row[0]} - {row[1]}" for row in myresult]  # Combina o tipo de produto com o fornecedor
+        total_vendido = [row[2] for row in myresult]
 
-    # Extraindo os dados
-    produtos_fornecedores = [f"{row[0]} - {row[1]}" for row in myresult]
-    total_vendido = [row[2] for row in myresult]
+        # Criando um DataFrame para exibir os resultados tabulares
+        data = pd.DataFrame({
+            'Tipo de Produto e Fornecedor': produtos_fornecedores,
+            'Quantidade Vendida': total_vendido
+        })
 
-    # Gerando o gráfico de barras
-    plt.figure(figsize=(10, 6))
-    plt.bar(produtos_fornecedores, total_vendido, color='lightgreen')
-    plt.xlabel('Tipo de Produto e Fornecedor')
-    plt.ylabel('Quantidade Vendida')
-    plt.title('Quantidade de Produtos Vendidos por Tipo e Fornecedor')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
+        # Exibindo a tabela de forma tabular no terminal
+        print("\nResultado da Consulta:")
+        print(data)
 
-    # Exibindo o gráfico
-    plt.show()
+        # Gerando o gráfico de barras
+        plt.figure(figsize=(10, 6))
+        plt.bar(produtos_fornecedores, total_vendido, color='lightgreen')
+        plt.xlabel('Tipo de Produto e Fornecedor')
+        plt.ylabel('Quantidade Vendida')
+        plt.title('Quantidade de Produtos Vendidos por Tipo e Fornecedor')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+
+        # Exibindo o gráfico
+        plt.show()
+
+    except Exception as e:
+        print(f"Erro ao executar a consulta: {e}")
+
     cursor.close()
 
 def consulta3():
@@ -346,29 +367,42 @@ def consulta3():
     ORDER BY 
         despesa_media DESC
     """
-    print("Consulta 3: Despesa Média por Funcionário e Tipo de Serviço.")
+    print("\nConsulta 3: Despesa Média por Funcionário e Tipo de Serviço.")
+
     cursor = cnx.cursor()
-    cursor.execute(select_query)
-    myresult = cursor.fetchall()
+    try:
+        cursor.execute(select_query)
+        myresult = cursor.fetchall()
 
-    for x in myresult:
-        print(x)
+        # Extraindo os dados para exibição no terminal
+        funcionarios_servicos = [f"{row[0]} - {row[1]}" for row in myresult]  # Combina o nome do funcionário com o tipo de serviço
+        despesa_media = [row[2] for row in myresult]
 
-    # Extraindo os dados
-    funcionarios_servicos = [f"{row[0]} - {row[1]}" for row in myresult]
-    despesa_media = [row[2] for row in myresult]
+        # Criando um DataFrame para exibir os resultados tabulares
+        data = pd.DataFrame({
+            'Funcionário e Tipo de Serviço': funcionarios_servicos,
+            'Despesa Média (R$)': despesa_media
+        })
 
-    # Gerando o gráfico de barras
-    plt.figure(figsize=(10, 6))
-    plt.bar(funcionarios_servicos, despesa_media, color='lightcoral')
-    plt.xlabel('Funcionário e Tipo de Serviço')
-    plt.ylabel('Despesa Média (R$)')
-    plt.title('Despesa Média por Funcionário e Tipo de Serviço')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
+        # Exibindo a tabela de forma tabular no terminal
+        print("\nResultado da Consulta:")
+        print(data)
 
-    # Exibindo o gráfico
-    plt.show()
+        # Gerando o gráfico de barras
+        plt.figure(figsize=(10, 6))
+        plt.bar(funcionarios_servicos, despesa_media, color='lightcoral')
+        plt.xlabel('Funcionário e Tipo de Serviço')
+        plt.ylabel('Despesa Média (R$)')
+        plt.title('Despesa Média por Funcionário e Tipo de Serviço')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+
+        # Exibindo o gráfico
+        plt.show()
+
+    except Exception as e:
+        print(f"Erro ao executar a consulta: {e}")
+
     cursor.close()
 
 def crud():

@@ -9,6 +9,7 @@ try:
         print("""\n       ---MENU---
         1.  Operações
         2.  Consultas
+        3.  IA
         0.  Desconectar do Banco de Dados\n """)
         
         try:
@@ -21,8 +22,10 @@ try:
                 fc.operacoesMenu()
             elif choice == 2:
                 fc.consultasMenu()
+            elif choice == 3:
+                exec(open("ia.py").read())
             else:
-                print("Opção inválida. Escolha entre 0 e 2.")
+                print("Opção inválida. Escolha entre 0 e 3.")
         except ValueError:
             print("Entrada inválida. Digite um número.")
 

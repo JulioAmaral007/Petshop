@@ -281,7 +281,7 @@ df['cluster'] = clusters.labels_
 df.head()
 
 # Gemini_Key=userdata.get('GEMINI_AI_KEY_GENAI')
-genai.configure(api_key='AIzaSyAhRv-0PIagwdmfvRgZ36XZRZvQoIBi19M')
+genai.configure(api_key='GEMINI_AI_KEY_GENAI')
 
 model = genai.GenerativeModel('gemini-1.5-flash')
 dados_json = df.to_json()

@@ -12,14 +12,46 @@ def connect():
     global cnx
     global cursor
     try:
-        # Estabelecer a conexão
-        cnx = psycopg2.connect(host=DB_HOST, port=DB_PORT, database=DB_NAME, user=DB_USER, password=DB_PASSWORD)
-        cnx.autocommit = False  # Impede o commit automático, permitindo controle manual
+        # Conectar ao banco padrão 'postgres' para garantir que possamos criar o banco de dados
+        initial_cnx = psycopg2.connect(
+            host=DB_HOST, 
+            port=DB_PORT, 
+            database='postgres',  # Conexão inicial ao banco padrão
+            user=DB_USER, 
+            password=DB_PASSWORD
+        )
+        initial_cnx.autocommit = True  # Necessário para executar CREATE DATABASE
+        initial_cursor = initial_cnx.cursor()
+        
+        # Verificar se o banco de dados especificado existe
+        initial_cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,))
+        exists = initial_cursor.fetchone()
+
+        if not exists:
+            # Criar o banco de dados se não existir
+            initial_cursor.execute(f"CREATE DATABASE {DB_NAME}")
+            print(f"Banco de dados '{DB_NAME}' criado com sucesso.")
+        else:
+            print(f"Banco de dados '{DB_NAME}' já existe.")
+        
+        # Fechar a conexão inicial
+        initial_cursor.close()
+        initial_cnx.close()
+
+        # Estabelecer a conexão ao banco de dados desejado
+        cnx = psycopg2.connect(
+            host=DB_HOST, 
+            port=DB_PORT, 
+            database=DB_NAME, 
+            user=DB_USER, 
+            password=DB_PASSWORD
+        )
+        cnx.autocommit = False  # Controle manual do commit
 
         if cnx:
             print("Conectado ao servidor PostgreSQL")
-            cursor = cnx.cursor()  # Cria o cursor após a conexão ser estabelecida
-            cursor.execute("select current_database();")
+            cursor = cnx.cursor()  # Criar o cursor para a conexão principal
+            cursor.execute("SELECT current_database();")
             db_name = cursor.fetchone()
             print("Conectado ao banco de dados:", db_name[0])
         
@@ -40,9 +72,9 @@ def operacoesMenu():
         1.  CRUD
         2.  Criar todas as tabelas
         3.  Deletar todas as tabelas
-        4.  Inserir os dados
-        5.  Atualizar alguns dados
-        6.  Deletar alguns dados
+        4.  Inserir teste
+        5.  Atualizar teste
+        6.  Deletar teste
         7.  Update valor
         8.  Mostrar tabela
         0.  Voltar\n """)

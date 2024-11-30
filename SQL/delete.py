@@ -40,11 +40,6 @@ delete = {
         DELETE FROM Raca 
         WHERE id_raca NOT IN (SELECT DISTINCT id_raca FROM Animal);
     """),
-    # "animal": ("""
-    #     DELETE FROM Animal 
-    #     WHERE nome IN ('Rex', 'Luna', 'Max', 'Bella', 'Milo', 'Toby', 'Rex', 'Tina', 'Piui', 'Rico', 'Gigi', 'Pipoca', 'Simba', 'Luna', 'Toby', 'Dolly', 'Sasha', 'Rocky', 'Fufu', 'Nina', 'Blue') 
-    #     AND id_raca IN (6, 2, 3, 5, 7, 8, 22, 23, 24, 25, 21, 4, 9, 10, 32, 20, 27);
-    # """),
     "cliente": ("""
         DELETE FROM Cliente 
         WHERE id_cliente IN (
@@ -72,13 +67,4 @@ delete = {
             FROM Produto
         );
     """),
-    # "funcionario": ("""
-    #     DELETE FROM Funcionario 
-    #     WHERE cpf IN ('12345678901', '23456789012', '34567890123', '45678901234', '56789012345', '67890123456', '78901234567', '89012345678')
-    #     AND nome IN ('João Silva', 'Maria Oliveira', 'Carlos Pereira', 'Ana Santos', 'Fernanda Costa', 'Paulo Souza', 'Juliana Martins', 'Ricardo Lima');
-    # """),
-    # "tipofuncionario": ("""
-    #     DELETE FROM TipoFuncionario 
-    #     WHERE descricao IN ('Banhista/Tosador', 'Veterinário', 'Gerente', 'Recepcionista', 'Assistente Administrativo');
-    # """),
 }

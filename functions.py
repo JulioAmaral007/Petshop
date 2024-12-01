@@ -5,8 +5,8 @@ from SQL.inserts import inserts
 from SQL.updates import updates
 from SQL.delete import delete
 import matplotlib.pyplot as plt
-import pandas as pd
 from settings import *
+from IPython.display import display, Markdown
 import pandas as pd
 import numpy as np
 import matplotlib.cm as cm
@@ -475,6 +475,13 @@ def crud():
     consulta2()
     consulta3()
 
+import re
+
+def remove_html_tags(text):
+    # Remover tudo que está entre '<' e '>'
+    clean_text = re.sub(r'<.*?>', '', text)
+    return clean_text
+
 def IA():
     df = pd.read_csv("db_ia.csv")
     df.head()
@@ -724,41 +731,54 @@ def IA():
     df['cluster'] = clusters.labels_
     df.head()
 
-    # Gemini_Key=userdata.get('GEMINI_AI_KEY_GENAI')
-
-    genai.configure(api_key='Gemini_Key')
+    genai.configure(api_key='GEMINI_AI_KEY_GENAI')
 
     model = genai.GenerativeModel('gemini-1.5-flash')
 
+    # Supondo que 'df' seja o seu DataFrame
     dados_json = df.to_json()
-    dados_json
 
-    contexto = f"""Estava analisando dados de um dataset com o obejtivo de identificar padrões úteis nos atendimentos de um petshop. Com isto em vista, gerei clusters para analisa-los.
-                    as colunas deste dataset são:
-                    -id_atendimento: id do atendimento, apenas para níveis de organiuzação;
-                    -data_venda: Data da venda, no caso do atendimento envolver venda de um produto;
-                    -valor_venda: Valor da venda, no caso do atendimento envolver venda de um produto;
-                    -descricao_servico: Serviço oferecido;
-                    -valor_servico: Valor do serviço oferecido;
-                    -nome_animal: Nome do animal;
-                    -peso_animal: Peso do animal;
-                    -nome_cliente: Nome do cliente, dono do animal atendido;
-                    -nome_funcionario: Nome do funcionário que atendeu o cliente;
-                    -cpf_funcionario: CPF do funcionário que atendeu o cliente;
-                    -data_atendimento: Data do atendimento;
-                    -valor_total_atendimento: Valor total do atendimento;
-                    -cluster: Cluster da tupla na sua totalidade;
+    # Preparando o contexto com informações do dataset
+    contexto = f"""
+    Estava analisando dados de um dataset com o objetivo de identificar padrões úteis nos atendimentos de um petshop. Com isto em vista, gerei clusters para analisá-los.
+    As colunas deste dataset são:
+    - id_atendimento: ID do atendimento, apenas para níveis de organização;
+    - data_venda: Data da venda, no caso do atendimento envolver venda de um produto;
+    - valor_venda: Valor da venda, no caso do atendimento envolver venda de um produto;
+    - descricao_servico: Serviço oferecido;
+    - valor_servico: Valor do serviço oferecido;
+    - nome_animal: Nome do animal;
+    - peso_animal: Peso do animal;
+    - nome_cliente: Nome do cliente, dono do animal atendido;
+    - nome_funcionario: Nome do funcionário que atendeu o cliente;
+    - cpf_funcionario: CPF do funcionário que atendeu o cliente;
+    - data_atendimento: Data do atendimento;
+    - valor_total_atendimento: Valor total do atendimento;
+    - cluster: Cluster da tupla na sua totalidade.
 
-                    Note que seu objetivo é identificar qual ou quais colunas são mais determinantes para o rótulo do cluster, quero entender qual critério o algoritmo aderiu
-                    ao gerar os clusters. Ao identificar as colunas principais, se for o caso, diga a que faixa cada cluster se enquadra.
-                    Aqui estão os dados na forma de JSON:
-                    {dados_json}
-                    """
-    contexto
+    Note que seu objetivo é identificar qual ou quais colunas são mais determinantes para o rótulo do cluster, quero entender qual critério o algoritmo aderiu ao gerar os clusters. Ao identificar as colunas principais, se for o caso, diga a que faixa cada cluster se enquadra.
+    Aqui estão os dados na forma de JSON:
+    {dados_json}
+    """
 
-    instrucoes = """Use os dados fornecidos e obedeça o prompt do usuário, gere inferencias e use métricas como desvio padrão e correlação, trate os dados se necessário"""
+    # Definindo as instruções para o modelo
+    instrucoes = """
+    Use os dados fornecidos e obedeça o prompt do usuário, gere inferências e use métricas como desvio padrão e correlação, trate os dados se necessário.
+    """
 
-    user_prompt = """Com base no contexto fornecido e seguindo as instruções dadas, descubra o critério adotado pelo algoritmo k-means para gerar clusters dos meus dados."""
+    # Definindo o prompt do usuário
+    user_prompt = """
+    Com base no contexto fornecido e seguindo as instruções dadas, descubra o critério adotado pelo algoritmo k-means para gerar clusters dos meus dados.
+    """
 
-    response = model.generate_content(f"{user_prompt} \n Instruções:{instrucoes} \n Contexto:{contexto}")
-    print(response.text)
+    # Geração da resposta utilizando o modelo
+    response = model.generate_content(f"{user_prompt}\nInstruções:{instrucoes}\nContexto:{contexto}")
+
+    # Exibindo a resposta no formato Markdown
+    import markdown
+
+    # Converte o texto Markdown para HTML
+    html_content = markdown.markdown(response.text)
+    clean_text = remove_html_tags(html_content)
+    print(clean_text)
+

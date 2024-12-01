@@ -31,4 +31,3 @@ try:
 
 except fc.psycopg2.Error as err:
     print("Não foi possível se conectar ao Banco de Dados devido ao seguinte erro: \n", err.args)
-

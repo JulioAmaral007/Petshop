@@ -26,7 +26,7 @@ from pyod.models.ecod import ECOD
 from yellowbrick.cluster import KElbowVisualizer
 import lightgbm as lgb
 import prince
-# from google.colab import userdata
+import re
 import google.generativeai as genai
 
 def connect():
@@ -130,7 +130,7 @@ def consultasMenu():
         print("""\n       ---CONSULTAS---
         1. Receita total por cliente com dados de funcionários
         2. Quantidade de produtos vendidos por tipo de produto e fornecedor
-        3. Despesa média por funcionário e tipo de serviço
+        3. Receita Total por Espécie de Animal
         0. Voltar\n """)
 
         try:
@@ -149,7 +149,7 @@ def consultasMenu():
                 consulta2()
             
             elif choice == 3:
-                print("Executando despesa média por funcionário e tipo de serviço...")
+                print("Executando receita Total por Espécie de Animal...")
                 consulta3()
             
             else:
@@ -292,7 +292,7 @@ def consulta1():
     SELECT 
         c.nome AS nome_cliente,
         f.nome AS nome_funcionario,
-        SUM(nv.valor) AS receita_total
+        SUM(a.valor_total) AS receita_total
     FROM 
         Cliente c
     JOIN 
@@ -347,21 +347,21 @@ def consulta1():
 def consulta2():
     select_query = """
     SELECT 
-        tp.descricao AS tipo_produto,
-        f.nome AS nome_fornecedor,
-        SUM(ap.qtde) AS total_vendido
+        tp.descricao AS TipoProduto,
+        f.nome AS Fornecedor,
+        SUM(ap.qtde) AS QuantidadeVendida
     FROM 
-        TipoProduto tp
+        Produto p
     JOIN 
-        Produto p ON tp.id_tipo_produto = p.id_tipo_produto
-    JOIN 
-        AtendimentoProduto ap ON p.id_produto = ap.id_produto
+        TipoProduto tp ON p.id_tipo_produto = tp.id_tipo_produto
     JOIN 
         Fornecedor f ON p.id_fornecedor = f.id_fornecedor
+    JOIN 
+        AtendimentoProduto ap ON p.id_produto = ap.id_produto
     GROUP BY 
         tp.descricao, f.nome
     ORDER BY 
-        total_vendido DESC
+        QuantidadeVendida DESC;
     """
     print("Consulta 2: Quantidade de Produtos Vendidos por Tipo e Fornecedor.")
 
@@ -404,23 +404,20 @@ def consulta2():
 def consulta3():
     select_query = """
     SELECT 
-        f.nome AS nome_funcionario,
-        ts.descricao AS tipo_servico,
-        AVG(a.valor_total) AS despesa_media
+        e.nome AS Especie,
+        SUM(a.valor_total) AS ReceitaTotal
     FROM 
-        Funcionario f
+        Atendimento a
     JOIN 
-        Atendimento a ON f.id_funcionario = a.id_funcionario
+        Animal an ON a.id_animal = an.id_animal
     JOIN 
-        Servico s ON a.id_servico = s.id_servico
+        Raca r ON an.id_raca = r.id_raca
     JOIN 
-        TipoServico ts ON s.id_tipo_servico = ts.id_tipo_servico
+        Especie e ON r.id_especie = e.id_especie
     GROUP BY 
-        f.nome, ts.descricao
-    ORDER BY 
-        despesa_media DESC
+        e.nome;
     """
-    print("\nConsulta 3: Despesa Média por Funcionário e Tipo de Serviço.")
+    print("\nConsulta 3: Receita Total por Espécie de Animal.")
 
     cursor = cnx.cursor()
     try:
@@ -428,13 +425,13 @@ def consulta3():
         myresult = cursor.fetchall()
 
         # Extraindo os dados para exibição no terminal
-        funcionarios_servicos = [f"{row[0]} - {row[1]}" for row in myresult]  # Combina o nome do funcionário com o tipo de serviço
-        despesa_media = [row[2] for row in myresult]
+        especies = [row[0] for row in myresult]  # Nome da espécie
+        receita_total = [row[1] for row in myresult]  # Receita total
 
         # Criando um DataFrame para exibir os resultados tabulares
         data = pd.DataFrame({
-            'Funcionário e Tipo de Serviço': funcionarios_servicos,
-            'Despesa Média (R$)': despesa_media
+            'Espécie': especies,
+            'Receita Total (R$)': receita_total
         })
 
         # Exibindo a tabela de forma tabular no terminal
@@ -443,10 +440,10 @@ def consulta3():
 
         # Gerando o gráfico de barras
         plt.figure(figsize=(10, 6))
-        plt.bar(funcionarios_servicos, despesa_media, color='lightcoral')
-        plt.xlabel('Funcionário e Tipo de Serviço')
-        plt.ylabel('Despesa Média (R$)')
-        plt.title('Despesa Média por Funcionário e Tipo de Serviço')
+        plt.bar(especies, receita_total, color='skyblue')
+        plt.xlabel('Espécie')
+        plt.ylabel('Receita Total (R$)')
+        plt.title('Receita Total por Espécie de Animal')
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
 
@@ -474,8 +471,6 @@ def crud():
     consulta1()
     consulta2()
     consulta3()
-
-import re
 
 def remove_html_tags(text):
     # Remover tudo que está entre '<' e '>'
@@ -731,7 +726,7 @@ def IA():
     df['cluster'] = clusters.labels_
     df.head()
 
-    genai.configure(api_key='GEMINI_AI_KEY_GENAI')
+    genai.configure(api_key='Gemini-API-Key')
 
     model = genai.GenerativeModel('gemini-1.5-flash')
 

@@ -200,7 +200,7 @@ O módulo de IA, disponível tanto via menu no terminal quanto no notebook `ia.i
 
 **Desenvolvido por:**
 
-- Júlio Cézar Rodrigues Pereira
+- Júlio Cézar Amaral Pereira
 
 ---
 

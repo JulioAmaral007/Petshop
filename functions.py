@@ -5,7 +5,6 @@ from SQL.inserts import inserts
 from SQL.updates import updates
 from SQL.delete import delete
 import matplotlib.pyplot as plt
-from settings import *
 from IPython.display import display, Markdown
 import pandas as pd
 import numpy as np
@@ -33,39 +32,13 @@ def connect():
     global cnx
     global cursor
     try:
-        # Conectar ao banco padrão 'postgres' para garantir que possamos criar o banco de dados
-        initial_cnx = psycopg2.connect(
-            host=DB_HOST, 
-            port=DB_PORT, 
-            database='postgres',  # Conexão inicial ao banco padrão
-            user=DB_USER, 
-            password=DB_PASSWORD
-        )
-        initial_cnx.autocommit = True  # Necessário para executar CREATE DATABASE
-        initial_cursor = initial_cnx.cursor()
-        
-        # Verificar se o banco de dados especificado existe
-        initial_cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,))
-        exists = initial_cursor.fetchone()
-
-        if not exists:
-            # Criar o banco de dados se não existir
-            initial_cursor.execute(f"CREATE DATABASE {DB_NAME}")
-            print(f"Banco de dados '{DB_NAME}' criado com sucesso.")
-        else:
-            print(f"Banco de dados '{DB_NAME}' já existe.")
-        
-        # Fechar a conexão inicial
-        initial_cursor.close()
-        initial_cnx.close()
-
         # Estabelecer a conexão ao banco de dados desejado
         cnx = psycopg2.connect(
-            host=DB_HOST, 
-            port=DB_PORT, 
-            database=DB_NAME, 
-            user=DB_USER, 
-            password=DB_PASSWORD
+            host='localhost', 
+            port='5432', 
+            database='petshop', 
+            user='postgres', 
+            password='22131511'
         )
         cnx.autocommit = False  # Controle manual do commit
 
@@ -266,7 +239,6 @@ def updateValue():
 
 def showTable():
     print("\nTabelas")
-    # Criação das tabelas
     cursor = cnx.cursor()
     for table_name in tables:
         print("Nome: {}".format(table_name))
@@ -465,7 +437,8 @@ def crud():
     consulta2()
     consulta3()
 
-    updateValue()
+    updateSQL()
+    deleteSQL()
 
     print("\n---CONSULTAS AFTER---")
     consulta1()

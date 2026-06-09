@@ -3,7 +3,7 @@ import functions as fc
 try:
     fc.connect()
     fc.dropTables()
-    opcao = 1
+    # opcao = 1
 
     while True:  # Loop principal do menu
         print("""\n       ---MENU---

@@ -1,3 +1,4 @@
+import os
 import psycopg2
 from SQL.tables import tables
 from SQL.drop import drop
@@ -38,7 +39,7 @@ def connect():
             port='5432', 
             database='petshop', 
             user='postgres', 
-            password='22131511'
+            password=os.getenv('DB_PASSWORD')
         )
         cnx.autocommit = False  # Controle manual do commit
 
@@ -699,7 +700,7 @@ def IA():
     df['cluster'] = clusters.labels_
     df.head()
 
-    genai.configure(api_key='Gemini-API-Key')
+    genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
 
     model = genai.GenerativeModel('gemini-1.5-flash')
 
